@@ -1,0 +1,28 @@
+# 旧版工作流（存档保留，不再定时运行）
+# 此文件保留用于参考，所有运行请使用 paper-digest.yml
+# 如需手动触发，可在 GitHub Actions 页面选择此工作流并点击 "Run workflow"
+
+name: arXiv Daily Digest (Legacy)
+
+on:
+  workflow_dispatch:  # 仅手动触发，无定时计划
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run arXiv daily digest
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          DEEPSEEK_BASE_URL: ${{ secrets.DEEPSEEK_BASE_URL }}
+          DEEPSEEK_MODEL: ${{ secrets.DEEPSEEK_MODEL }}
+          QQ_SMTP_PASSWORD: ${{ secrets.QQ_SMTP_PASSWORD }}
+          QQ_SENDER: ${{ secrets.QQ_SENDER }}
+          QQ_RECEIVER: ${{ secrets.QQ_RECEIVER }}
+        run: python -m paper_digest.cli digest
