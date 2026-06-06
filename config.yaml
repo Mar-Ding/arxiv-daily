@@ -1,0 +1,36 @@
+# AI学术论文智能日报系统 — 配置文件
+# 敏感信息（API Key等）通过环境变量设置，优先级更高
+
+arxiv:
+  rate_limit: 8
+  categories:
+    - cs.CV
+    - cs.RO
+    - cs.AI
+    - cs.LG
+    - cs.MA
+  max_per_category: 200
+  lookback_days: 3
+
+llm:
+  provider: deepseek
+  # DeepSeek 配置（API Key 通过 DEEPSEEK_API_KEY 环境变量设置）
+  deepseek:
+    base_url: "https://api.deepseek.com/v1"
+    model: "deepseek-chat"
+
+
+email:
+  smtp_host: "smtp.qq.com"
+  smtp_port: 465
+  sender: "2105845780@qq.com"
+  # QQ_SMTP_PASSWORD 环境变量设置SMTP授权码
+  receiver: "2105845780@qq.com"
+
+database:
+  path: "data/papers.db"
+
+visualization:
+  output_dir: "output"
+  dpi: 150
+  font: "SimHei"

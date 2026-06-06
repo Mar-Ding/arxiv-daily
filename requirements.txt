@@ -1,0 +1,4 @@
+matplotlib>=3.5
+flask>=2.0
+pyyaml>=5.4
+jieba>=0.42

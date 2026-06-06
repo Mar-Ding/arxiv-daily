@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Data
+data/*.db
+
+# Output (keep directory, ignore generated files)
+output/*.html
+output/*.png
+
+# Config (don't commit secrets)
+.env
+*.local.yaml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temp
+test_*.json
+*.log
+
+# Course assignment doc
+大作业要求.docx

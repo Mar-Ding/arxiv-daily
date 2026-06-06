@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI学术论文智能日报 — 仪表盘</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+               background: #f0f2f5; color: #333; }
+        .header { background: linear-gradient(135deg, #2c3e50, #3498db);
+                  color: white; padding: 24px 32px; }
+        .header h1 { font-size: 24px; margin-bottom: 4px; }
+        .header p { font-size: 14px; opacity: 0.8; }
+        .nav { background: white; border-bottom: 1px solid #e0e0e0; padding: 0 32px; display: flex; gap: 0; }
+        .nav a { display: block; padding: 14px 24px; text-decoration: none; color: #666;
+                 border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .nav a:hover, .nav a.active { color: #3498db; border-bottom-color: #3498db; }
+        .content { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                      gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .stat-card .num { font-size: 32px; font-weight: bold; color: #3498db; }
+        .stat-card .label { font-size: 13px; color: #999; margin-top: 4px; }
+        .section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px;
+                   box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .section h2 { font-size: 18px; margin-bottom: 16px; color: #2c3e50; }
+        .chart-container { text-align: center; margin: 16px 0; }
+        .chart-container img { max-width: 100%; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+        .chart-container p { margin-top: 8px; font-size: 13px; color: #666; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 10px 12px; background: #f8f9fa; font-size: 13px; color: #666; }
+        td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        tr:hover { background: #f8f9fa; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 16px; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; background: #e8f4fd; color: #2980b9; }
+        .footer { text-align: center; padding: 24px; font-size: 12px; color: #999; }
+        @media (max-width: 600px) {
+            .header { padding: 16px; }
+            .nav { padding: 0 16px; overflow-x: auto; }
+            .content { padding: 0 8px; }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📄 AI学术论文智能日报</h1>
+        <p>基于大模型的 arXiv 论文筛选与数据分析平台 · 《人工智能程序设计》大作业</p>
+    </div>
+    <div class="nav">
+        <a href="/" class="active">📊 数据总览</a>
+        <a href="/charts">📈 可视化图表</a>
+        <a href="/papers">📚 论文列表</a>
+        <a href="/digests">📰 日报历史</a>
+        <a href="/search">🔍 搜索</a>
+    </div>
+    <div class="content">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="num">{{ stats.total_papers }}</div>
+                <div class="label">论文总数</div>
+            </div>
+            <div class="stat-card">
+                <div class="num">{{ stats.total_digests }}</div>
+                <div class="label">日报期数</div>
+            </div>
+            <div class="stat-card">
+                <div class="num">{{ stats.categories }}</div>
+                <div class="label">研究方向数</div>
+            </div>
+        </div>
+
+        {% if charts %}
+        <div class="section">
+            <h2>📈 数据可视化</h2>
+            <div class="charts-grid">
+                {% for name, path in charts.items() %}
+                {% if name != 'charts_count' %}
+                <div class="chart-container">
+                    <img src="{{ url_for('static', filename='charts/' + path.split('/')[-1]) }}" alt="{{ name }}">
+                    <p>{{ name }}</p>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if recent_papers %}
+        <div class="section">
+            <h2>📚 最新论文</h2>
+            <table>
+                <tr><th>标题</th><th>分类</th><th>日期</th></tr>
+                {% for p in recent_papers %}
+                <tr>
+                    <td><a href="{{ p.link }}" target="_blank">{{ p.title[:80] }}{% if p.title|length > 80 %}...{% endif %}</a></td>
+                    <td><span class="badge">{{ p.primary_category }}</span></td>
+                    <td>{{ p.published }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% endif %}
+
+        {% if digests %}
+        <div class="section">
+            <h2>📰 日报历史</h2>
+            <table>
+                <tr><th>日期</th><th>抓取论文数</th><th>筛选论文数</th><th>操作</th></tr>
+                {% for d in digests %}
+                <tr>
+                    <td>{{ d.date }}</td>
+                    <td>{{ d.total_fetched }}</td>
+                    <td>{{ d.total_selected }}</td>
+                    <td><a href="/digest/{{ d.id }}">查看</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% endif %}
+    </div>
+    <div class="footer">
+        AI学术论文智能日报系统 · 武汉理工大学 丁驿 · 《人工智能程序设计》大作业
+    </div>
+</body>
+</html>

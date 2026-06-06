@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>论文列表 — AI学术论文智能日报</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+               background: #f0f2f5; color: #333; }
+        .header { background: linear-gradient(135deg, #2c3e50, #3498db); color: white; padding: 24px 32px; }
+        .header h1 { font-size: 24px; }
+        .nav { background: white; border-bottom: 1px solid #e0e0e0; padding: 0 32px; display: flex; }
+        .nav a { display: block; padding: 14px 24px; text-decoration: none; color: #666; border-bottom: 2px solid transparent; }
+        .nav a:hover, .nav a.active { color: #3498db; border-bottom-color: #3498db; }
+        .content { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        th { text-align: left; padding: 12px 16px; background: #f8f9fa; font-size: 13px; color: #666; border-bottom: 2px solid #eee; }
+        td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        tr:hover { background: #f8f9fa; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; background: #e8f4fd; color: #2980b9; }
+        .pagination { text-align: center; margin: 20px 0; }
+        .pagination a { display: inline-block; padding: 8px 16px; margin: 0 4px; background: white; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+        .footer { text-align: center; padding: 24px; font-size: 12px; color: #999; }
+    </style>
+</head>
+<body>
+    <div class="header"><h1>📚 论文列表</h1></div>
+    <div class="nav">
+        <a href="/">📊 数据总览</a>
+        <a href="/charts">📈 可视化图表</a>
+        <a href="/papers" class="active">📚 论文列表</a>
+        <a href="/digests">📰 日报历史</a>
+        <a href="/search">🔍 搜索</a>
+    </div>
+    <div class="content">
+        <p style="margin-bottom:12px;color:#666;font-size:13px;">共 {{ total }} 篇论文 · 第 {{ page }} 页</p>
+        <table>
+            <tr><th>标题</th><th>分类</th><th>作者</th><th>日期</th></tr>
+            {% for p in papers %}
+            <tr>
+                <td><a href="{{ p.link }}" target="_blank">{{ p.title[:70] }}{% if p.title|length > 70 %}...{% endif %}</a></td>
+                <td><span class="badge">{{ p.primary_category }}</span></td>
+                <td style="font-size:12px;color:#666;">{{ p.authors[:30] }}{% if p.authors|length > 30 %}...{% endif %}</td>
+                <td style="font-size:12px;">{{ p.published }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <div class="pagination">
+            {% if page > 1 %}<a href="?page={{ page-1 }}">← 上一页</a>{% endif %}
+            <a href="?page={{ page+1 }}">下一页 →</a>
+        </div>
+    </div>
+    <div class="footer">AI学术论文智能日报系统 · 武汉理工大学 丁驿</div>
+</body>
+</html>
